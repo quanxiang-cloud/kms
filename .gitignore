@@ -1,0 +1,7 @@
+*.exe
+*.testdata
+*.security
+*.out
+*.html
+
+.vscode
