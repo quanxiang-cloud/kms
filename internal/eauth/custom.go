@@ -29,4 +29,5 @@ func (c *Custom) Init(ak *models.AgencyKey) error {
 // Invoke invoke
 func (c *Custom) Invoke(d interface{}) ([]*AuthResp, error) {
 	// TODO:
+	return nil, nil
 }
