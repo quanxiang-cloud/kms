@@ -28,6 +28,8 @@ type CookieContent struct {
 	AuthURL    string                 `json:"authURL"` // sample: http://xxxxx.com/api/login
 	Method     string                 `json:"method"`  // POST GET etc.
 	Resp       []*CookieResp          `json:"resp"`
+
+	Const []*AuthResp // const response
 }
 
 // CookieResp CookieResp
@@ -44,6 +46,7 @@ func (c *Cookie) Init(ak *models.AgencyKey) error {
 		Body:   map[string]interface{}{},
 		Query:  map[string]string{},
 		Resp:   []*CookieResp{},
+		Const:  []*AuthResp{},
 	}
 	return c.AuthBase.Init(ak)
 }
@@ -139,11 +142,21 @@ func (c *CookieContent) Parse(vals rule.ConfigValueSet) error {
 				// do nothing
 			}
 		case val.In != "":
-			c.Resp = append(c.Resp, &CookieResp{
-				RespField: val.Name,
-				RespType:  val.CaptureIn,
-				In:        val.In,
-			})
+			if val.Data != "" {
+				c.Const = append(c.Const, &AuthResp{
+					In:    val.In,
+					Name:  val.Name,
+					Value: val.Data,
+				})
+			}
+
+			if val.CaptureIn != "" {
+				c.Resp = append(c.Resp, &CookieResp{
+					RespField: val.Name,
+					RespType:  val.CaptureIn,
+					In:        val.In,
+				})
+			}
 		case val.Type == enums.BasicTypeAuthURL.Val():
 			c.AuthURL = val.Data
 		case val.Type == enums.BasicTypeMethod.Val():
@@ -188,5 +201,8 @@ func (c *CookieContent) getToken(where []*CookieResp) ([]*AuthResp, error) {
 			In:    in.In,
 		})
 	}
+
+	// Append const params
+	tokens = append(tokens, c.Const...)
 	return tokens, nil
 }
