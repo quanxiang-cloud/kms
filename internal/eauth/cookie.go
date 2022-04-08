@@ -7,8 +7,7 @@ import (
 	"kms/internal/models"
 	"kms/internal/models/redis"
 	"kms/internal/rule"
-	"kms/pkg/random"
-	"kms/pkg/timestamp"
+	"kms/pkg/function"
 	"strconv"
 	"time"
 )
@@ -107,13 +106,13 @@ func (c *CookieContent) Parse(vals rule.ConfigValueSet) error {
 			case enums.BasicTypeKeySecret.Val():
 				val.Data = ConfigSecretKeyName
 			case enums.BasicTypeFormatDate.Val():
-				val.Data = timestamp.Format(time.Now(), val.Data)
+				val.Data = function.Format(time.Now(), val.Data)
 			case enums.BasicTypeRandom.Val():
 				l, err := strconv.Atoi(val.Data)
 				if err != nil {
 					return err
 				}
-				val.Data = random.String(l)
+				val.Data = function.String(l)
 			}
 
 			switch val.From {

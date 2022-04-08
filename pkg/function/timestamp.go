@@ -1,4 +1,4 @@
-package timestamp
+package function
 
 import "kms/internal/enums"
 
