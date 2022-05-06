@@ -1,7 +1,6 @@
 package restful
 
 import (
-	"context"
 	"fmt"
 	"kms/internal/polysign"
 	"kms/internal/service"
@@ -159,9 +158,7 @@ func (keyGen *KeyGen) Signature(c *gin.Context) {
 		return
 	}
 
-	// TODO: remove
-	ctx := context.WithValue(header.MutateContext(c), tenantID, "1")
-	signResp, err := keyGen.k.Signature(ctx, &req)
+	signResp, err := keyGen.k.Signature(header.MutateContext(c), &req)
 
 	if err != nil {
 		if err2, ok := err.(error2.Error); ok {
@@ -178,8 +175,3 @@ func (keyGen *KeyGen) Signature(c *gin.Context) {
 		c.Writer.Header().Add("Department-Id", v)
 	}
 }
-
-// TODO: remove
-var (
-	tenantID interface{} = "Tenant-Id"
-)

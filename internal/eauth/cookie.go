@@ -172,6 +172,7 @@ func (c *CookieContent) Parse(vals rule.ConfigValueSet) error {
 	return nil
 }
 
+// TODO: support alias
 func (c *CookieContent) getToken(where []*CookieResp) ([]*AuthResp, error) {
 	tokens := make([]*AuthResp, 0, len(where))
 	for _, in := range where {

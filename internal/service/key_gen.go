@@ -439,9 +439,11 @@ func (k *keyGenerator) Signature(ctx context.Context, req *SignatureReq) (*Signa
 	if len(infos) <= 0 {
 		return nil, error2.NewErrorWithString(error2.Internal, "not found users info")
 	}
-	deptIDs := make([]string, 0, len(infos[0].DepIDs))
-	for _, v := range infos[0].DepIDs {
-		deptIDs = append(deptIDs, v.ID)
+	deptIDs := make([]string, 0, 8)
+	for _, dep := range infos[0].Dep {
+		for _, v := range dep {
+			deptIDs = append(deptIDs, v.ID)
+		}
 	}
 
 	return &SignatureResp{

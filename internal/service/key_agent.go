@@ -560,6 +560,7 @@ func (ka *keyAgent) UpdateInBatch(ctx context.Context, req *UpdateInBatchReq) (*
 		return nil, err
 	}
 
+	// FIXME: remove auth result cache
 	if err := ka.redis.Del(redis.CacheAgencyKeyList, req.Service, cacheSingleService(req.Service)); err != nil {
 		ka.log.Error("failed to delete agencyList: ", err.Error())
 	}
