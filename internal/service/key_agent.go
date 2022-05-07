@@ -16,6 +16,7 @@ import (
 	"kms/pkg/math"
 	"kms/pkg/misc/code"
 	"kms/pkg/misc/config"
+	"kms/pkg/xsvc"
 
 	error2 "github.com/quanxiang-cloud/cabin/error"
 	id2 "github.com/quanxiang-cloud/cabin/id"
@@ -410,8 +411,9 @@ func (ka *keyAgent) DeleteByPrefixPath(ctx context.Context, req *DeleteByPrefixP
 
 // AuthReq req
 type AuthReq struct {
-	ID   string                 `json:"ID" binding:"required"`
-	Body map[string]interface{} `json:"body" binding:"required"`
+	ID             string                 `json:"ID" binding:"required"`
+	Body           map[string]interface{} `json:"body" binding:"required"`
+	APIServiceArgs string                 `json:"-"`
 }
 
 // AuthResp resp
@@ -424,6 +426,24 @@ func (ka *keyAgent) Authorize(ctx context.Context, req *AuthReq) (*AuthResp, err
 	ak, err := ka.check(ctx, req.ID, OpSignature)
 	if err != nil {
 		return nil, err
+	}
+
+	if req.APIServiceArgs != "" {
+		xArgs, err := xsvc.Unmarshal(req.APIServiceArgs)
+		if err != nil {
+			return nil, err
+		}
+		ak = &models.AgencyKey{
+			// Note: ignore AuthType and AuthContent in current version
+			// AuthType:	xArgs.AuthType,
+			// AuthContent: xArgs.AuthContent,
+			Host:        xArgs.Host,
+			AuthType:    ak.AuthType,
+			AuthContent: ak.AuthContent,
+			KeyID:       xArgs.KeyID,
+			KeySecret:   xArgs.KeySecret,
+			Parsed:      rule.NotParsed,
+		}
 	}
 
 	at, err := eauth.GetAuthFactory().Create(ak)
@@ -439,7 +459,7 @@ func (ka *keyAgent) Authorize(ctx context.Context, req *AuthReq) (*AuthResp, err
 	}
 
 	// FIXME: result of func (random, date ...) will be parsed.
-	if !rule.CheckParse(ak.Parsed) {
+	if !rule.CheckParse(ak.Parsed) && ak.ID != "" {
 		b, err := json.Marshal(at.GetContent())
 		if err != nil {
 			return nil, err

@@ -1,6 +1,7 @@
 package restful
 
 import (
+	"kms/internal/polysign"
 	"kms/internal/service"
 	"kms/pkg/misc/config"
 
@@ -97,7 +98,7 @@ func (agent *KeyAgent) Authorize(c *gin.Context) {
 		resp.Format(nil, error2.NewErrorWithString(error2.ErrParams, err.Error())).Context(c)
 		return
 	}
-
+	req.APIServiceArgs = c.GetHeader(polysign.XHeaderPolyServiceArgs)
 	resp.Format(agent.e.Authorize(header.MutateContext(c), req)).Context(c)
 }
 

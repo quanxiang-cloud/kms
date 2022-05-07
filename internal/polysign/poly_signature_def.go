@@ -8,6 +8,7 @@ const (
 	XHeaderPolySignKeyID             = "X-Polysign-Access-Key-Id"
 	XHeaderPolySignTimestamp         = "X-Polysign-Timestamp"
 	XInternalHeaderPolySignSignature = "X-Inner-Polysign-Signature" // NOTE: kms signature result header
+	XHeaderPolyServiceArgs           = "X-Poly-Service-Args"        // redirect service with base64-args
 )
 
 // special body field define
