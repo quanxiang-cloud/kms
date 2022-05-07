@@ -11,8 +11,8 @@ type XServiceArgs struct {
 	Host        string `json:"host"`
 	AuthType    string `json:"authType"`
 	AuthContent string `json:"authContent"`
-	KeyID       string `json:"key_id"`
-	KeySecret   string `json:"key_secret"`
+	KeyID       string `json:"keyID"`
+	KeySecret   string `json:"keySecret"`
 }
 
 // Unmarshal serialize X-Poly-Service-Args
